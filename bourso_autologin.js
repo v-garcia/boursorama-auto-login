@@ -67,10 +67,10 @@ const DIGIT_B64 = {
     return;
   }
 
+  log('Virtual keyboard is ready');
+
   // Set userName
   $('#form_login').val(BOURSO_USR);
-
-  log('Virtual keyboard is ready');
 
   // Get button base64 images
   const digitImgs = $pwdInput
