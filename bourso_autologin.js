@@ -78,7 +78,7 @@ const DIGIT_B64 = {
     .map((x, y) => $(y).attr('src'))
     .get();
 
-  // Get DOM buttons that match digit images (Array<Promises<
+  // Get DOM buttons that match digit images (Array<Promises>)
   const digitBtns = [...BOURSO_PWD].map(digitToButton);
 
   // Click on these buttons in order
