@@ -8,6 +8,10 @@
 // @require     https://rawgit.com/Huddle/Resemble.js/master/resemble.js
 // TODO : Opti don't search again for duplicate digits
 // ==/UserScript==
+//
+//
+
+console.info('Start bourso autologer v2');
 
 // Credentials to change
 const BOURSO_USR = 'CHANGEME';
@@ -28,19 +32,36 @@ const DIGIT_B64 = {
 };
 
 (function boursoAutoLogin() {
+  // Get b64 image from a button
+  const buttonToB64Pic = button => {
+    const $button = $(button);
+
+    // Get the style attribute
+    const btnStyle = $button.attr('style');
+
+    // Parse style attribute for b64 picture
+    const [b64pic] = /data:image\/([a-zA-Z]*);base64,([^\"]*)/.exec(btnStyle);
+
+    return b64pic;
+  };
+
   const digitToButton = digit => {
     const referencePicture = DIGIT_B64[digit];
-    const comparisons = digitImgs.map(elem => imageCompareWrapper(referencePicture, elem));
+    const comparisons = digitImgs.map(elem =>
+      imageCompareWrapper(referencePicture, elem)
+    );
 
     return Promise.all(comparisons).then(values => {
       // Order images by reasemblence
       values.sort((a, b) => a.misMatchPercentage - b.misMatchPercentage);
 
       // Pick the button whit the most reasembling pic in the DOM
-      const $targetPic = $pwdInput.find(`[data-matrix-key] img[src="${values[0].p2}"]`);
+      const targetPic = $('[data-matrix-key]')
+        .toArray()
+        .find(el => buttonToB64Pic(el) === values[0].p2);
 
-      log(`Letter ${digit}, code : ${$targetPic.parent().data('matrix-key')}`);
-      return $targetPic;
+      log(`Letter ${digit}, code : ${$(targetPic).data('matrix-key')}`);
+      return $(targetPic);
     });
   };
 
@@ -57,28 +78,38 @@ const DIGIT_B64 = {
     });
   };
 
+  // Password frame
   const $pwdInput = $('ul.password-input');
 
   const log = msg => console.log(`bourso_login : ${msg}`);
 
-  if (!$pwdInput.length || !document.URL.endsWith('/connexion/')) {
+  // Digit buttons
+  const $digitBtns = $pwdInput.find('[data-matrix-key]');
+
+  // Wait for pwd input available and visible with digit buttons available too
+
+  if (
+    !$pwdInput.length ||
+    !$digitBtns.length ||
+    !document.URL.endsWith('/connexion/')
+  ) {
     log('Virtual keyboard is NOT ready, retrying');
     window.setTimeout(boursoAutoLogin, 500);
     return;
   }
 
-  log('Virtual keyboard is ready');
-
   // Set userName
   $('#form_login').val(BOURSO_USR);
 
+  log('Virtual keyboard is ready');
+
   // Get button base64 images
   const digitImgs = $pwdInput
-    .find('[data-matrix-key] img')
-    .map((x, y) => $(y).attr('src'))
+    .find('[data-matrix-key]')
+    .map((x, y) => buttonToB64Pic(y))
     .get();
 
-  // Get DOM buttons that match digit images (Array<Promises>)
+  // Get DOM buttons that match digit images (Array<Promises<
   const digitBtns = [...BOURSO_PWD].map(digitToButton);
 
   // Click on these buttons in order
