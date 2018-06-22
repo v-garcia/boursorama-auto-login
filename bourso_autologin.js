@@ -91,7 +91,7 @@ const DIGIT_B64 = {
   if (
     !$pwdInput.length ||
     !$digitBtns.length ||
-    !document.URL.endsWith('/connexion/')
+    !/\/connexion\/?(\?.*)?$/.test(document.URL)
   ) {
     log('Virtual keyboard is NOT ready, retrying');
     window.setTimeout(boursoAutoLogin, 500);
