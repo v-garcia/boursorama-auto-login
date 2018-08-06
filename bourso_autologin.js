@@ -32,7 +32,12 @@ const DIGIT_B64 = {
 };
 
 (function boursoAutoLogin() {
-  // Get b64 image from a button
+  // Define some functions
+
+  // Logger fn
+  const log = msg => console.log(`bourso_login : ${msg}`);
+
+  // Get b64 image from a button HTMLElement, by extraction for style attribute
   const buttonToB64Pic = button => {
     const $button = $(button);
 
@@ -45,17 +50,16 @@ const DIGIT_B64 = {
     return b64pic;
   };
 
+  // Get a digit and return the HTMLElement associated by comparing resemblance with reference base 64 pictures
   const digitToButton = digit => {
     const referencePicture = DIGIT_B64[digit];
-    const comparisons = digitImgs.map(elem =>
-      imageCompareWrapper(referencePicture, elem)
-    );
+    const comparisons = digitImgs.map(elem => imageCompareWrapper(referencePicture, elem));
 
     return Promise.all(comparisons).then(values => {
-      // Order images by reasemblence
+      // Order images by resemblance
       values.sort((a, b) => a.misMatchPercentage - b.misMatchPercentage);
 
-      // Pick the button whit the most reasembling pic in the DOM
+      // Pick the button whith the most resembling pic in the DOM
       const targetPic = $('[data-matrix-key]')
         .toArray()
         .find(el => buttonToB64Pic(el) === values[0].p2);
@@ -65,6 +69,7 @@ const DIGIT_B64 = {
     });
   };
 
+  // Wrap resemble.js with Promise because this lib use old fashion callbacks
   const imageCompareWrapper = (p1b64, p2b64) => {
     return new Promise(function(resolve, reject) {
       try {
@@ -78,41 +83,38 @@ const DIGIT_B64 = {
     });
   };
 
-  // Password frame
-  const $pwdInput = $('ul.password-input');
+  // Do the work
 
-  const log = msg => console.log(`bourso_login : ${msg}`);
+  // Password input
+  const $pwdInput = $('ul.password-input');
 
   // Digit buttons
   const $digitBtns = $pwdInput.find('[data-matrix-key]');
 
-  // Wait for pwd input available and visible with digit buttons available too
+  // Wait for url mathing login form and pwd input and digit buttons availables
+  // If not, wait and retry
 
-  if (
-    !$pwdInput.length ||
-    !$digitBtns.length ||
-    !/\/connexion\/?(\?.*)?$/.test(document.URL)
-  ) {
+  if (!/\/connexion\/?(\?.*)?$/.test(document.URL) || !$pwdInput.length || !$digitBtns.length) {
     log('Virtual keyboard is NOT ready, retrying');
     window.setTimeout(boursoAutoLogin, 500);
     return;
   }
 
+  log('Virtual keyboard is ready');
+
   // Set userName
   $('#form_login').val(BOURSO_USR);
 
-  log('Virtual keyboard is ready');
-
-  // Get button base64 images
+  // Get buttons base64 images
   const digitImgs = $pwdInput
     .find('[data-matrix-key]')
     .map((x, y) => buttonToB64Pic(y))
     .get();
 
-  // Get DOM buttons that match digit images (Array<Promises<
+  // Get DOM buttons that match digit images (Array<Promise<HtmlElement>>)
   const digitBtns = [...BOURSO_PWD].map(digitToButton);
 
-  // Click on these buttons in order
+  // Click on these buttons in order and submit login form
   Promise.all(digitBtns).then(btnList => {
     btnList.forEach(b => b.click());
     log('Form submiting');
