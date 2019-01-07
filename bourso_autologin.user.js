@@ -5,7 +5,7 @@
 // @include     https://clients.boursorama.com/connexion/*
 // @version     1
 // @grant       none
-// @require     https://rawgit.com/Huddle/Resemble.js/master/resemble.js
+// @require     https://cdn.jsdelivr.net/gh/Huddle/Resemble.js@master/resemble.js
 // TODO : Opti don't search again for duplicate digits
 // ==/UserScript==
 //
