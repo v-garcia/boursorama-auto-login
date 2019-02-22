@@ -119,5 +119,5 @@ const DIGIT_B64 = {
     btnList.forEach(b => b.click());
     log('Form submiting');
     $('.js-form-login').submit();
-  });
+  }).catch(log);
 })();
