@@ -3,4 +3,4 @@ An userscript aiming to automate boursorama login
 
 Tested in GreaseMonkey and ViolentMonkey.
 
-Don't forget to fill BOURSO_USR and BOURSO_PWD consts before adding the script.
+Don't forget to fill BOURSO_PWD consts before adding the script.
