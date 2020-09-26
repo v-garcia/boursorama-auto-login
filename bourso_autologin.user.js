@@ -56,7 +56,7 @@ function digitToButton (digit) {
 
   // Wait for url mathing login form and pwd input and digit buttons availables
   // If not, wait and retry
-  if (!/\/connexion\/saisie-mot-de-passe\/$/.test(document.URL) || !$pwdInput.length || !$digitBtns.length) {
+  if (!/\/connexion\/saisie-mot-de-passe(\/)?$/.test(document.URL) || !$pwdInput.length || !$digitBtns.length) {
     log('Virtual keyboard is NOT ready, retrying');
     window.setTimeout(login, 500);
     return;
