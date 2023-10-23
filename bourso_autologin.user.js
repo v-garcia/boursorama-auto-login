@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        bourso_login
 // @namespace   bourso_login
-// @description Autologin for boursorama
-// @include     https://clients.boursorama.com/connexion/*
-// @version     4
+// @description Autologin for boursobank
+// @include     https://clients.boursobank.com/connexion/*
+// @version     5
 // @grant       none
 // ==/UserScript==
 //
@@ -61,6 +61,7 @@ function digitToButton(buttons, digit) {
 
   // Get DOM buttons & click in order
   const digitBtns = [...BOURSO_PWD].map(digitToButton.bind(null, $digitBtns));
+
   digitBtns.forEach((b) => b.click());
   document.querySelector('.js-form-login').submit();
 })();
