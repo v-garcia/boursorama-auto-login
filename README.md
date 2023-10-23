@@ -1,5 +1,5 @@
-# boursorama_auto_logger (rebranded to boursobank)
-An userscript aiming to automate boursorama login
+# boursorama_auto_logger
+An userscript aiming to automate boursobank login
 
 Tested in GreaseMonkey and ViolentMonkey.
 
