@@ -1,4 +1,4 @@
-# boursorama_auto_logger
+# boursorama_auto_logger (rebranded to boursobank)
 An userscript aiming to automate boursorama login
 
 Tested in GreaseMonkey and ViolentMonkey.
